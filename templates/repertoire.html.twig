@@ -1,0 +1,108 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+    * {
+        margin: 2px;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .grid-wrapper > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .grid-wrapper > div > a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .grid-wrapper > div > a > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+        transition: opacity 0.3s;
+    }
+
+    .grid-wrapper > div:hover > a > img {
+        opacity: 0.7;
+    }
+
+    .grid-wrapper {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-auto-rows: 200px;
+        grid-auto-flow: dense;
+    }
+
+    .grid-wrapper .wide {
+        grid-column: span 2;
+    }
+
+    .grid-wrapper .tall {
+        grid-row: span 2;
+    }
+
+    .grid-wrapper .big {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border-radius: 5px;
+        transition: opacity 0.3s;
+        text-align: center;
+        pointer-events: none;
+        font-size: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #993558;
+    }
+
+    .age { font-size: 18px; }
+
+    .grid-wrapper > div:hover .overlay {
+        opacity: 1;
+    }
+</style>
+
+<div class="grid-wrapper">
+    {% for animal in animaux %}
+        {% set imageClass = divOrder[loop.index0] %}
+        <div class="{{ imageClass }}">
+            <a href="/repertoire/{{ animal.nom }}/{{ animal.id }}">
+                <img src="{{ animal.image }}" alt="" />
+                <div class="overlay">
+                    <span class="nom">{{ animal.nom }}</span>
+                    <span class="age">{{ animal.age }} ans</span>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

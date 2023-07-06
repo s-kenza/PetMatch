@@ -1,0 +1,33 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+    .container { display: flex; flex-direction: column; align-items: center; text-align: center;}
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        outline: 0;
+        border: none;
+        cursor: pointer;
+        padding: 0 24px;
+        border-radius: 50px;
+        min-width: 200px;
+        height: 50px;
+        font-size: 18px;
+        background-color: none;
+        font-weight: 500;
+        color: black;
+        margin-top: 20px;
+    }
+    img { width: 40px ; margin-right: 10px; }
+    a { text-decoration: none; }
+</style>
+    <div class="container">
+        <h1>Bravo ! Votre animal a été mis en adoption</h1>
+        <a href='/repertoire/{{ nom }}/{{ animalId}}'><button><img src="https://cdn-icons-png.flaticon.com/512/181/181621.png"/>Voir l'annonce</button></a>
+        <a href='/repertoire'><button><img src="https://cdn-icons-png.flaticon.com/512/109/109232.png"/>Retourner au répertoire des animaux</button></a>
+        <a href='/account'><button><img src="https://static.thenounproject.com/png/196259-200.png"/>Voir l'historique de vos demandes d'adoption</button></a>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+    .animal-details-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .animal-details-image {
+        width: 200px;
+        margin-right: 20px;
+    }
+
+    .animal-details-info { flex-grow: 1; margin-left: 60px;}
+
+    .image-animal {
+        width: 450px;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .animal-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .animal-details-content { display: flex; align-items: center; margin-bottom: 15px; }
+
+    .image-caption {
+        margin-top: 10px;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        width: 20px;
+        height: 20px;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+    button {
+        display: inline-block;
+        outline: 0;
+        border: none;
+        cursor: pointer;
+        padding: 0 24px;
+        border-radius: 50px;
+        min-width: 200px;
+        height: 50px;
+        font-size: 18px;
+        background-color: #d8515e;
+        font-weight: 500;
+        color: #fff;
+    }
+    .indisponible p { color: red; font-weight: bold; }
+</style>
+
+<div class="animal-details-container">
+    <div class="animal-details-title">
+        <h1>Rencontrez notre adorable ami, {{ animal.nom }} !</h1>
+    </div>
+
+    <div class="animal-details-content">
+        <div class="image-animal">
+            <img class="animal-image" src="{{ animal.image }}" alt="Photo de {{ animal.nom }}" />
+            <div class="image-caption">
+                {{ animal.nom }}. Photo prise par PetMatch.
+                <span>
+                    <img class="logo" src="https://cdn-icons-png.flaticon.com/512/489/489399.png" alt="PetMatch Logo" width="16" height="16" />
+                </span>
+            </div>
+        </div>
+
+        <div class="animal-details-info">
+            <h2>Caractéristiques de {{ animal.nom }}</h2>
+            <p>Genre : {{ animal.genre }}</p>
+            <p>Espèce : {{ animal.espece }}</p>
+            <p>Vaccinations : {{ animal.vaccinations }}</p>
+            <p>Comportement : {{ animal.comportement }}</p>
+            <p>Conditions d'adoption : {{ animal.conditions_adoption }}</p>
+        </div>
+
+    </div>
+
+            {% if availabilityResult.count > 0 %}
+                <div class="indisponible">
+                    <p>Cet animal est actuellement en demande d'adoption.</p>
+                </div>
+            {% elseif connexion.login %}
+                {% if availabilityResult.count == 0 %}
+                    <form action="/account" method="POST">
+                        <input type="hidden" name="animalId" value="{{ animal.id }}">
+                        <button type="submit">J'ADOPTE</button>
+                    </form>
+                {% else %}
+                    <div class="indisponible">
+                        <p>Cet animal est actuellement en demande d'adoption.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                {% if availabilityResult.count == 0 %}
+                    <a href="/register"><button type="submit">J'ADOPTE</button></a>
+                {% else %}
+                    <div class="indisponible">
+                        <p>Cet animal est actuellement en demande d'adoption.</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+
+
+</div>
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 500px;
+      margin: 100px auto;
+      background: #ecf0f1;
+      border-radius: 10px;
+      background-image: url('https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8&w=1000&q=80');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      left: 100px;
+    }
+    button {
+      display: inline-block;
+        outline: 0;
+        border: none;
+        cursor: pointer;
+        padding: 0 24px;
+        border-radius: 50px;
+        min-width: 200px;
+        height: 50px;
+        font-size: 18px;
+        background-color: #d8515e;
+        font-weight: 500;
+        color: #fff;
+        margin-top: 20px;
+    }
+    .save, .login {
+      position: relative;
+      margin-top: 60px;
+    }
+    .save .btn, .login .btn {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      bottom: 50px;
+    }
+    .form-container {
+      position: absolute;
+      top: -20px;
+      bottom: -20px;
+      left: -200px;
+      padding-top: 30px;
+      background: #fff;
+      width: 75%;
+      box-shadow: 0 0 60px -10px rgba(0,0,0,.25);
+      z-index: 1;
+      overflow: auto;
+      transition: .7s;
+    }
+    h1 { display: flex; justify-content: center; }
+    .btn {
+      width: 130px;
+      color: #fff;
+      border-radius: 5px;
+      border: none;
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: .7px;
+      text-align: center;
+      z-index: 2;
+      cursor: pointer;
+    }
+    .btn:hover {
+      opacity: 0.85;
+    }
+    .btn-primary { background: #2ecc71; }
+    .btn-secondary { background: #0984e3; }
+    input {
+      border: none;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 20px auto;
+      transition: .7s;
+    }
+    input::placeholder { color: rgba(0,0,0,.4); }
+    input:focus {
+      outline-style:none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+    input[type="radio"] {
+      display: none;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+    #adoption:checked + .form-container { left: 0; }
+    #adoption:not(:checked) + .form-container { left: 50%; }
+    #adoption:not(:checked) + .form-container input[type="text"]:nth-child(1) {
+      margin-top: -90px;
+      opacity: 0;
+      visibility: 0;
+    }
+    #adoption:not(:checked) + .form-container input[type="text"]:nth-child(2) {
+      opacity: 0;
+      visibility: 0;
+    }
+    select {
+      border: none;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 15px auto;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      transition: .7s;
+    }
+
+    select:focus {
+      outline-style:none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+    textarea {
+      border: 1px solid #bdc3c7;
+      border-radius: 5px;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 15px auto;
+      transition: .7s;
+      resize: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(0, 0, 0, .4);
+    }
+
+    textarea:focus {
+      outline-style: none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+
+    label[for="description"] {
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 20px;
+      display: block;
+      color: #333;
+      justify-content: 
+    }
+
+    input[type="file"] {
+      border: none;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 15px auto;
+      transition: .7s;
+    }
+
+    input[type="file"]::placeholder {
+      color: rgba(0, 0, 0, .4);
+    }
+
+    input[type="file"]:focus {
+      outline-style: none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+
+    input[type="file"] + label {
+      background-color: #2ecc71;
+      color: #fff;
+      border-radius: 5px;
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: .7px;
+      text-align: center;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    input[type="file"] + label:hover { opacity: 0.85; }
+    .checkbox-container .checkbox-options label { margin: 10px; }
+    .checkbox-container { display: flex; flex-direction: column; }
+    .checkbox-container .checkbox-options { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-top: 10px; margin-bottom: 10px; }
+    .checkbox-container input { width: auto; margin:0 ;}
+</style>
+  <h1>Formulaire de mise en adoption</h1>
+  <div class="container">
+      <form id="adoption-form" method="POST" action="/adoption" enctype="multipart/form-data">
+      <div class="form-container">
+      <!-- Prénom -->
+      <label for="prenom">Prénom de l'animal :</label>
+      <input type="text" placeholder="Prénom" name="nom" required maxlength="20">
+      <!-- Espèce -->
+      <label for="espece">Espèce de l'animal :</label>
+      <select name="espece">
+          <option value="Chien">Chien</option>
+          <option value="Chat">Chat</option>
+      </select>
+
+      <!-- Age -->
+      <label for="age">Age de l'animal :</label>
+      <input type="number" placeholder="Age" name="age" required min="0" max="99">
+      <!-- Description -->
+      <label for="description">Décrivez le comportement de l'animal, sa personnalité :</label>
+      <textarea id="description" name="description" rows="5" cols="33" required maxlength="255"></textarea>
+      <!-- Genre -->
+      <label for="genre">Genre de l'animal :</label>
+      <select name="genre">
+          <option value="Femelle">Femelle</option>
+          <option value="Mâle">Mâle</option>
+      </select>
+      <!-- Vaccin -->
+      <div class="checkbox-container">
+        <label for="vaccins">Vaccin(s) de l'animal :</label>
+        <div class="checkbox-options">
+          <input type="checkbox" id="vaccin1" name="vaccin1">
+          <label for="checkbox1">Vaccin 1</label>
+          <input type="checkbox" id="vaccin2" name="vaccin2">
+          <label for="checkbox2">Vaccin 2</label>
+        </div>
+      </div>
+      <!-- Comportement -->
+      <div class="checkbox-container">
+        <label for="comportements">Comportement de l'animal :</label>
+        <div class="checkbox-options">
+          <input type="checkbox" id="comportement1" name="comportement1">
+          <label for="checkbox1">Joueur</label>
+          <input type="checkbox" id="comportement2" name="comportement2">
+          <label for="checkbox2">Sociable</label>
+          <input type="checkbox" id="comportement3" name="comportement3">
+          <label for="checkbox3">Calme</label>
+          <input type="checkbox" id="comportement4" name="comportement4">
+          <label for="checkbox4">Indépendant</label>
+        </div>
+      </div>
+      <!-- Conditions adoption -->
+      <div class="checkbox-container">
+        <label for="conditions">Conditions d'adoption :</label>
+        <div class="checkbox-options">
+          <input type="checkbox" id="condition1" name="condition1">
+          <label for="checkbox1">Famille avec enfants</label>
+          <input type="checkbox" id="condition2" name="condition2">
+          <label for="checkbox2">Maison avec jardin</label>
+          <input type="checkbox" id="condition3" name="condition3">
+          <label for="checkbox3">Environnement calme</label>
+          <input type="checkbox" id="condition4" name="condition4">
+          <label for="checkbox4">Personne seule ou couple</label>
+        </div>
+      </div>
+      </div>
+        
+    </div>
+
+      <div class="save">
+        <button type="submit" class="">
+          Mettre en adoption
+        </button>  
+      </div>
+    </form>
+</div>
+
+{% endblock %}

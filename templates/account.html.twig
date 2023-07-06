@@ -1,0 +1,93 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+    .container { display: flex; justify-content: center; flex-direction: column; color: black;}
+    .historique, .text-box, .boutons-container { display: flex; justify-content: center; }
+    .depot, .demande { margin: 20px auto; }
+    button {
+            display: inline-block;
+            outline: 0;
+            border: none;
+            cursor: pointer;
+            padding: 0 24px;
+            border-radius: 50px;
+            min-width: 200px;
+            height: 50px;
+            font-size: 18px;
+            background-color: #d8515e;
+            font-weight: 500;
+            color: #fff;
+            margin-right: 5px;
+        }
+    .logout { background-color: #AA0000; margin-left: 5px; }
+    .delete { 
+        
+                    display: inline-block;
+                    outline: none;
+                    cursor: pointer;
+                    font-size: 14px;
+                    padding: 0 12px;
+                    line-height: 20px;
+                    height: 30px;
+                    max-height: 30px;
+                    background: none;
+                    font-weight: 700;
+                    border: 0;
+                    border-radius: 0;
+                    color: #D92736;
+                    transition-timing-function: ease-in-out;
+                    transition-property: background;
+                    transition-duration: 150ms;
+                    box-shadow: none;
+                    :hover {
+                        background: #F7F9FD;
+                    }
+                
+     }
+     .error { color: red; margin-top: 10px; margin-bottom: 20px; }
+</style>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+        <div class="boutons-container">
+            <a href="/account"><button>Retour</button></a>
+        </div>
+    {% else %}
+    <div class="historique">
+    <div class="depot">
+        <h3>Historique de dépôt en adoption</h3>
+        {% for depot in depots_adoption %}
+            <p>Nom de l'animal : {{ depot.nom }}</p>
+            <p>Age de l'animal : {{ depot.age }} ans</p>
+            <p>Genre de l'animal : {{ depot.genre }}</p>
+            <p>Espece de l'animal : {{ depot.espece }}</p>
+            <form action="/account" method="POST">
+                <input type="hidden" name="depotId" value="{{ depot.id }}">
+                <button type="submit" class="delete">Supprimer le dépôt d'adoption pour {{ depot.nom }}</button>
+            </form>
+        {% endfor %}
+
+    </div>
+
+    <div class="demande">
+        <h3>Historique de demande d'adoption</h3>
+        {% for demande in demandes_adoption %}
+            <p>Nom de l'animal : {{ demande.nom }}</p>
+            <p>Age de l'animal : {{ demande.age }}</p>
+            <form action="/account" method="POST">
+                <input type="hidden" name="demandeId" value="{{ demande.id }}">
+                <button type="submit" class="delete">Supprimer la demande d'adoption pour {{ demande.nom }}</button>
+            </form>
+        {% endfor %}
+    </div>
+    </div>
+
+    <div class="boutons-container">
+        <a href="/repertoire"><button>Voir le répertoire</button></a>
+        <a href="/logout"><button class="logout">Se déconnecter</button></a>
+    </div>
+    {% endif %}
+
+
+{% endblock %}
