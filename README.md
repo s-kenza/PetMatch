@@ -44,6 +44,10 @@ Ce projet vise à faciliter le processus d'adoption d'animaux en offrant une pla
 Pour récupérer les dépendances déclarées dans `composer.json` et générer l'autoloader PSR-4, exécuter la commande suivante :
 
 ```bash
+composer dump-autoload
+```
+
+```bash
 composer install
 ```
 
