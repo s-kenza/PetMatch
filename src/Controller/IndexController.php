@@ -25,6 +25,7 @@ class IndexController extends AbstractController
     $statement='SELECT * FROM animaux';
     $stmt = $this->db->query($statement);
     $animaux = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     
     return $this->twig->render('repertoire.html.twig', ['animaux' => $animaux, 'divOrder' => $divOrder, 'connexion' => ['login' => $login]]);
   }
@@ -47,7 +48,7 @@ class IndexController extends AbstractController
       $checkStmt->execute(['animalId' => $id]);
       $availabilityResult = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-      $statement = "SELECT animaux.image, animaux.nom, animaux.id, animaux.genre, animaux.espece, details_animaux.vaccinations, details_animaux.comportement, details_animaux.conditions_adoption FROM animaux JOIN details_animaux ON animaux.id = details_animaux.animal_id WHERE animaux.nom = :nom";
+      $statement = "SELECT animaux.image, animaux.nom, animaux.id, animaux.genre, animaux.espece, animaux.age, details_animaux.vaccinations, details_animaux.comportement, details_animaux.conditions_adoption FROM animaux JOIN details_animaux ON animaux.id = details_animaux.animal_id WHERE animaux.nom = :nom";
       $stmt = $this->db->prepare($statement);
       $stmt->execute(['nom' => $nom]);
       $animal = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -62,6 +63,12 @@ class IndexController extends AbstractController
     $login = $_SESSION['login'] ?? null;
     $id = $_SESSION['id'] ?? null;
 
+    // Vérifier si l'utilisateur est connecté
+    if ($login === null) {
+        // Rediriger vers la page d'inscription
+        header('Location: /register');
+        exit();
+    }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Récupérer les données soumises
@@ -71,12 +78,15 @@ class IndexController extends AbstractController
       $description = $_POST['description'];
       $genre = $_POST['genre'];
 
-      $statement = "INSERT INTO animaux (nom, espece, age, description, genre) VALUES (:nom, :espece, :age, :description, :genre)";
-      $stmt = $this->db->prepare($statement);
-      $stmt->execute(['nom' => $nom, 'espece' => $espece, 'age' => $age, 'description' => $description, 'genre' => $genre]);
+        $statement = "INSERT INTO animaux (nom, espece, age, description, genre ) VALUES (:nom, :espece, :age, :description, :genre)";
+        $stmt = $this->db->prepare($statement);
+        $stmt->execute(['nom' => $nom, 'espece' => $espece, 'age' => $age, 'description' => $description, 'genre' => $genre,]);
 
-      // Récupérer l'id de l'animal nouvellement inséré
-      $animalId = $this->db->lastInsertId();
+        // Récupérer l'id de l'animal nouvellement inséré
+        $animalId = $this->db->lastInsertId();
+
+        // Stocker animalId dans la session
+        $_SESSION['animalId'] = $animalId;
 
       if (isset($_POST['vaccin1']) && isset($_POST['vaccin2'])) {
             $vaccins = 'Vaccin 1 et Vaccin 2';
@@ -135,7 +145,7 @@ class IndexController extends AbstractController
         }
         
         $conditionsAdoptionStr = implode(', ', $conditionsAdoption);
-        
+
         // Insérer les données dans la table "details_animaux"
         $statement = "INSERT INTO details_animaux (animal_id, conditions_adoption) VALUES (:animal_id, :conditions_adoption)";
         $stmt = $this->db->prepare($statement);
@@ -205,32 +215,33 @@ class IndexController extends AbstractController
 
 
   #[Route("/login", name: "login", httpMethod: "GET")]
-public function login(): string
-{
-    session_start();
-    $login = $_SESSION['login'] ?? null;
+    public function login(): string
+    {
+        session_start();
+        $login = $_SESSION['login'] ?? null;
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $login = $_POST['login'];
-        $mot_de_passe = $_POST['mot_de_passe'];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $login = $_POST['login'];
+            $mot_de_passe = $_POST['mot_de_passe'];
 
-        $statement = "SELECT connexion.id, connexion.login, connexion.mot_de_passe FROM connexion WHERE connexion.login = :login";
-        $stmt = $this->db->prepare($statement);
-        $stmt->execute(['login' => $login]);
-        $connexion = $stmt->fetch(PDO::FETCH_ASSOC);
+            $statement = "SELECT connexion.id, connexion.login, connexion.mot_de_passe FROM connexion WHERE connexion.login = :login";
+            $stmt = $this->db->prepare($statement);
+            $stmt->execute(['login' => $login]);
+            $connexion = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($connexion && password_verify($mot_de_passe, $connexion['mot_de_passe'])) {
-            $_SESSION['login'] = $connexion['login'];
-            $_SESSION['id'] = $connexion['id'];
+            if ($connexion && password_verify($mot_de_passe, $connexion['mot_de_passe'])) {
+                $_SESSION['login'] = $connexion['login'];
+                $_SESSION['id'] = $connexion['id'];
 
-            return $this->twig->render('account.html.twig', ['connexion' => $connexion]);
-        } else {
-            return $this->twig->render('login.html.twig', ['error' => 'Le mot de passe est incorrect']);
+                header("Location: /account");
+                exit();
+            } else {
+                return $this->twig->render('login.html.twig', ['error' => "Le mot de passe ou le nom d'utilisateur est incorrect."]);
+            }
         }
-    }
 
-    return $this->twig->render('login.html.twig', ['connexion' => $login]);
-}
+        return $this->twig->render('login.html.twig', ['connexion' => $login]);
+    }
 
 
   #[Route("/logout", name: "logout", httpMethod: "GET")]
@@ -251,7 +262,19 @@ public function login(): string
     $id = $_SESSION['id'] ?? null;
     $animalId = $_POST['animalId'] ?? null;
 
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && $login && $id && $animalId) {
+        // Vérifier la limite de demande d'adoption
+        $existingStatement = "SELECT COUNT(*) as count FROM demandes_adoption WHERE connexion_id = :loginId AND DATE(date_demande) = CURDATE()";
+        $existingStmt = $this->db->prepare($existingStatement);
+        $existingStmt->execute(['loginId' => $id]);
+        $existingResult = $existingStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existingResult['count'] >= 3) {
+            // Limite atteinte, afficher un message d'erreur ou rediriger vers une page spécifique
+            return $this->twig->render('account.html.twig', ['error' => "Vous avez atteint la limite des 3 demandes d'adoption pour aujourd'hui."]);
+        }
+
         // Vérifier si une demande d'adoption existe déjà pour cet utilisateur et cet animal
         $existingStatement = "SELECT COUNT(*) as count FROM demandes_adoption WHERE animal_id = :animalId AND connexion_id = :loginId";
         $existingStmt = $this->db->prepare($existingStatement);
@@ -270,55 +293,86 @@ public function login(): string
         }
     }  
 
-    $demandeId = $_POST['demandeId'] ?? null;
+        $demandeId = $_POST['demandeId'] ?? null;
 
-      if ($id && $demandeId) {
-          // Supprimer la demande d'adoption de la base de données
-          $deleteStatement = "DELETE FROM demandes_adoption WHERE id = :demandeId AND connexion_id = :loginId";
-          $deleteStmt = $this->db->prepare($deleteStatement);
-          $deleteStmt->execute(['demandeId' => $demandeId, 'loginId' => $id]);
-      }
+        if ($id && $demandeId) {
+            // Supprimer la demande d'adoption de la base de données
+            $deleteStatement = "DELETE FROM demandes_adoption WHERE id = :demandeId AND connexion_id = :loginId";
+            $deleteStmt = $this->db->prepare($deleteStatement);
+            $deleteStmt->execute(['demandeId' => $demandeId, 'loginId' => $id]);
+        }
 
-      $depotId = $_POST['depotId'] ?? null;
+        $depotId = $_POST['depotId'] ?? null;
 
-      if ($id && $depotId) {
-            // Vérifier si l'animal est présent dans la table demandes_adoption
-        $checkStatement = "SELECT COUNT(*) as count FROM demandes_adoption WHERE animal_id = (
-          SELECT animal_id FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId
-      )";
-        $checkStmt = $this->db->prepare($checkStatement);
-        $checkStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
-        $checkResult = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        if ($id && $depotId) {
+                // Vérifier si l'animal est présent dans la table demandes_adoption
+            $checkStatement = "SELECT COUNT(*) as count FROM demandes_adoption WHERE animal_id = (
+            SELECT animal_id FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId)";
+            $checkStmt = $this->db->prepare($checkStatement);
+            $checkStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
+            $checkResult = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-      if ($checkResult['count'] == 0) {
-          // Supprimer l'animal de la table depots_adoption
-          $deleteDepotStatement = "DELETE FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId";
-          $deleteDepotStmt = $this->db->prepare($deleteDepotStatement);
-          $deleteDepotStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
+        if ($checkResult['count'] == 0) {
+            // Supprimer l'animal de la table depots_adoption
+            $deleteDepotStatement = "DELETE FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId";
+            $deleteDepotStmt = $this->db->prepare($deleteDepotStatement);
+            $deleteDepotStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
 
-          // Supprimer l'animal de la table animaux
-          $deleteAnimalStatement = "DELETE FROM animaux WHERE id = (
-              SELECT animal_id FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId
-          )";
-          $deleteAnimalStmt = $this->db->prepare($deleteAnimalStatement);
-          $deleteAnimalStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
-      } else {
-          // L'animal est présent dans la table demandes_adoption, afficher un message d'erreur
-          return $this->twig->render('account.html.twig', ['error' => "L'animal est en demande d'adoption. Vous ne pouvez plus supprimer ce dépôt d'adoption."]);
-      }
-    }
+            // Supprimer l'animal de la table animaux
+            $deleteAnimalStatement = "DELETE FROM animaux WHERE id = (
+                SELECT animal_id FROM depots_adoption WHERE id = :depotId AND connexion_id = :loginId
+            )";
+            $deleteAnimalStmt = $this->db->prepare($deleteAnimalStatement);
+            $deleteAnimalStmt->execute(['depotId' => $depotId, 'loginId' => $id]);
+        } else {
+            // L'animal est présent dans la table demandes_adoption, afficher un message d'erreur
+            return $this->twig->render('account.html.twig', ['error' => "L'animal est en demande d'adoption. Vous ne pouvez plus supprimer ce dépôt d'adoption."]);
+        }
+        }
 
-      $statement='SELECT * FROM animaux INNER JOIN demandes_adoption ON demandes_adoption.animal_id = animaux.id WHERE connexion_id = :loginId';
-      $stmt = $this->db->prepare($statement);
-      $stmt->execute(['loginId' => $id]);
-      $demandes_adoption = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $statement='SELECT * FROM animaux INNER JOIN demandes_adoption ON demandes_adoption.animal_id = animaux.id WHERE connexion_id = :loginId';
+        $stmt = $this->db->prepare($statement);
+        $stmt->execute(['loginId' => $id]);
+        $demandes_adoption = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-      $statement2="SELECT * FROM animaux INNER JOIN depots_adoption ON depots_adoption.animal_id = animaux.id WHERE connexion_id = :loginId";
-      $stmt2 = $this->db->prepare($statement2);
-      $stmt2->execute(['loginId' => $id]);
-      $depots_adoption = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $statement2="SELECT * FROM animaux INNER JOIN depots_adoption ON depots_adoption.animal_id = animaux.id WHERE connexion_id = :loginId";
+        $stmt2 = $this->db->prepare($statement2);
+        $stmt2->execute(['loginId' => $id]);
+        $depots_adoption = $stmt2->fetchAll(PDO::FETCH_ASSOC);
       
     return $this->twig->render('account.html.twig',[ 'connexion' => ['login' => $login], 'demandes_adoption' => $demandes_adoption, 'depots_adoption' => $depots_adoption]);
+  }
+
+  #[Route("/update", name: "update", httpMethod: "GET")]
+  public function update(): string
+  {
+    session_start();
+    $login = $_SESSION['login'] ?? null;
+    $id = $_SESSION['id'] ?? null;
+    $animalId = $_SESSION['animalId'] ?? null;
+
+    $statement = "SELECT * FROM animaux INNER JOIN depots_adoption ON animaux.id = depots_adoption.animal_id WHERE animaux.id = :animalId";
+    $stmt = $this->db->prepare($statement);
+    $stmt->execute(['animalId' => $animalId]);
+    $animal = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $login && $id && $animalId) {
+         // Récupérer les données soumises
+        $nom = $_POST['nom'];
+        $espece = $_POST['espece'];
+        $age = $_POST['age'];
+        $description = $_POST['description'];
+        $genre = $_POST['genre'];
+
+        $updateStatement = "UPDATE animaux SET nom = :nom, espece = :espece, age = :age, description = :description, genre = :genre WHERE animaux.id = :animalId";
+        $updateStmt = $this->db->prepare($updateStatement);
+        $updateStmt->execute(['nom' => $nom, 'espece' => $espece, 'age' => $age, 'description' => $description, 'genre' => $genre, 'animalId' => $animalId]);
+        $modification = $updateStmt->fetch(PDO::FETCH_ASSOC);
+
+        header('Location: /account');
+        exit();
+    }
+    return $this->twig->render('update.html.twig', ['animal' => $animal]);
   }
 
 }

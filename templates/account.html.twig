@@ -21,31 +21,37 @@
             margin-right: 5px;
         }
     .logout { background-color: #AA0000; margin-left: 5px; }
-    .delete { 
+    .delete, .update { 
         
-                    display: inline-block;
-                    outline: none;
-                    cursor: pointer;
-                    font-size: 14px;
-                    padding: 0 12px;
-                    line-height: 20px;
-                    height: 30px;
-                    max-height: 30px;
-                    background: none;
-                    font-weight: 700;
-                    border: 0;
-                    border-radius: 0;
-                    color: #D92736;
-                    transition-timing-function: ease-in-out;
-                    transition-property: background;
-                    transition-duration: 150ms;
-                    box-shadow: none;
-                    :hover {
-                        background: #F7F9FD;
-                    }
-                
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 12px;
+            line-height: 20px;
+            height: 30px;
+            max-height: 30px;
+            background: none;
+            font-weight: 700;
+            border: 0;
+            border-radius: 0;
+            color: #D92736;
+            transition-timing-function: ease-in-out;
+            transition-property: background;
+            transition-duration: 150ms;
+            box-shadow: none;
+            :hover {
+                background: #F7F9FD;
+            }    
      }
      .error { color: red; margin-top: 10px; margin-bottom: 20px; }
+     .categorie { display: flex; }
+     .categorie img { width: 100%; height: 100%; object-fit: cover; }
+     .boutons-container button { display: flex; align-items: center; justify-content: center; }
+     .boutons-container img { width: 40px; filter: invert(100%) grayscale(100%) brightness(1000%) sepia(100%); margin-right: 10px; }
+     a { text-decoration: none; }
+     .update { color: blue; }
+     .demande-image { width: 150px; height: 100px; margin-right: 10px; }
 </style>
 
     {% if error %}
@@ -56,25 +62,35 @@
     {% else %}
     <div class="historique">
     <div class="depot">
-        <h3>Historique de dépôt en adoption</h3>
+        <h3>Historique des formulaires d'adoption</h3>
         {% for depot in depots_adoption %}
             <p>Nom de l'animal : {{ depot.nom }}</p>
             <p>Age de l'animal : {{ depot.age }} ans</p>
             <p>Genre de l'animal : {{ depot.genre }}</p>
             <p>Espece de l'animal : {{ depot.espece }}</p>
+            
+            <a href="/update"><button class="update">Modifier le formulaire d'adoption pour {{ depot.nom }}</button></a>
+
             <form action="/account" method="POST">
                 <input type="hidden" name="depotId" value="{{ depot.id }}">
-                <button type="submit" class="delete">Supprimer le dépôt d'adoption pour {{ depot.nom }}</button>
+                <button type="submit" class="delete">Supprimer le formulaire d'adoption pour {{ depot.nom }}</button>
             </form>
         {% endfor %}
 
     </div>
 
     <div class="demande">
-        <h3>Historique de demande d'adoption</h3>
+        <h3>Historique des demandes d'adoption</h3>
         {% for demande in demandes_adoption %}
-            <p>Nom de l'animal : {{ demande.nom }}</p>
-            <p>Age de l'animal : {{ demande.age }}</p>
+        <div class="categorie">
+            <div class="demande-image">
+            <img src={{ demande.image }} />
+            </div>
+            <div>
+                <p>Nom de l'animal : {{ demande.nom }}</p>
+                <p>Age de l'animal : {{ demande.age }}</p>
+            </div>
+        </div>
             <form action="/account" method="POST">
                 <input type="hidden" name="demandeId" value="{{ demande.id }}">
                 <button type="submit" class="delete">Supprimer la demande d'adoption pour {{ demande.nom }}</button>
@@ -84,10 +100,10 @@
     </div>
 
     <div class="boutons-container">
-        <a href="/repertoire"><button>Voir le répertoire</button></a>
-        <a href="/logout"><button class="logout">Se déconnecter</button></a>
+        <a href="/repertoire"><button><img style="width: 35px;" src="https://cdn.icon-icons.com/icons2/1744/PNG/512/3643766-album-image-landscape-photo-photos-picture_113407.png"/>Voir le répertoire</button></a>
+        <a href="/adoption"><button><img src="https://static.thenounproject.com/png/2034112-200.png"/>Proposer un animal en adoption</button></a>
+        <a href="/logout"><button class="logout"><img src="https://www.svgrepo.com/show/132889/logout.svg"/>Se déconnecter</button></a>
     </div>
     {% endif %}
-
 
 {% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'navbar.html.twig' %}
+
+{% block body %}
+<style>
+#feedback-form {
+  width: 580px;
+  margin: 0 auto;
+  padding: 20px 50px 40px;
+  font-family: sans-serif;
+}
+
+#feedback-form * {
+    box-sizing: border-box;
+}
+
+#feedback-form h2{
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#feedback-form input {
+  margin-bottom: 15px;
+}
+
+#feedback-form input[type=text] {
+  display: block;
+  height: 32px;
+  padding: 6px 16px;
+  width: 100%;
+  border: none;
+  background-color: #f3f3f3;
+}
+
+#feedback-form label {
+  color: #777;
+  font-size: 0.8em;
+}
+
+#feedback-form input[type=checkbox] {
+  float: left;
+}
+
+#feedback-form input:not(:checked) + #feedback-phone {
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#feedback-form #feedback-phone {
+  transition: .3s;
+}
+
+#feedback-form button[type=submit] {
+  display: block;
+  margin: 20px auto 0;
+  width: 150px;
+  height: 40px;
+  border-radius: 25px;
+  border: none;
+  color: #eee;
+  font-weight: 700;
+  box-shadow: 1px 4px 10px 1px #aaa;
+  
+  background: #207cca;
+}
+input {
+      border: none;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 20px auto;
+      transition: .7s;
+    }
+    input::placeholder { color: rgba(0,0,0,.4); }
+    input:focus {
+      outline-style:none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+    input[type="radio"] {
+      display: none;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+    select {
+      border: none;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 15px auto;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      transition: .7s;
+    }
+
+    select:focus {
+      outline-style:none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+    textarea {
+      border: 1px solid #bdc3c7;
+      border-radius: 5px;
+      border-bottom: 1px solid #bdc3c7;
+      padding: 5px 3px;
+      width: 70%;
+      display: block;
+      margin: 15px auto;
+      transition: .7s;
+      resize: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(0, 0, 0, .4);
+    }
+
+    textarea:focus {
+      outline-style: none;
+      box-shadow: 0 1px 0 #bdc3c7;
+      border-top: transparent;
+      transition: 200ms;
+    }
+
+    label[for="description"] {
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 20px;
+      display: block;
+      color: #333;
+      justify-content: 
+    }
+</style>
+    <div id="feedback-form">
+  <h2 class="header">Modification</h2>
+  <div>
+    <form action="/update" method="POST">
+    <!-- Prénom -->
+      <label for="prenom">Prénom de l'animal :</label>
+      <input type="text" name="nom" placeholder="Prénom" value="{{ animal[0].nom }}" required></input>
+      <!-- Espèce -->
+      <label for="espece">Espèce de l'animal :</label>
+      <select name="espece">
+          <option value="Chien" {% if animal[0].espece == 'Chien' %}selected{% endif %}>Chien</option>
+          <option value="Chat" {% if animal[0].espece == 'Chat' %}selected{% endif %}>Chat</option>
+      </select>
+      <!-- Age -->
+      <label for="age">Age de l'animal :</label>
+      <input type="number" placeholder="Age" name="age" min="1" max="99" value="{{ animal[0].age }}" required>
+      <!-- Description -->
+      <label for="description">Décrivez le comportement de l'animal, sa personnalité :</label>
+      <textarea id="description" name="description" rows="5" cols="33" maxlength="255" required>{{ animal[0].description }}</textarea>
+      <!-- Genre -->
+      <label for="genre">Genre de l'animal :</label>
+      <select name="genre">
+          <option value="Femelle" {% if animal[0].genre == 'Femelle' %}selected{% endif %}>Femelle</option>
+          <option value="Mâle" {% if animal[0].genre == 'Mâle' %}selected{% endif %}>Mâle</option>
+      </select>
+
+      <button type="submit">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

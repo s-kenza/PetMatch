@@ -157,43 +157,6 @@
       color: #333;
       justify-content: 
     }
-
-    input[type="file"] {
-      border: none;
-      border-bottom: 1px solid #bdc3c7;
-      padding: 5px 3px;
-      width: 70%;
-      display: block;
-      margin: 15px auto;
-      transition: .7s;
-    }
-
-    input[type="file"]::placeholder {
-      color: rgba(0, 0, 0, .4);
-    }
-
-    input[type="file"]:focus {
-      outline-style: none;
-      box-shadow: 0 1px 0 #bdc3c7;
-      border-top: transparent;
-      transition: 200ms;
-    }
-
-    input[type="file"] + label {
-      background-color: #2ecc71;
-      color: #fff;
-      border-radius: 5px;
-      padding: 10px 25px;
-      font-size: 16px;
-      font-weight: 300;
-      letter-spacing: .7px;
-      text-align: center;
-      cursor: pointer;
-      display: inline-block;
-      margin-top: 15px;
-    }
-
-    input[type="file"] + label:hover { opacity: 0.85; }
     .checkbox-container .checkbox-options label { margin: 10px; }
     .checkbox-container { display: flex; flex-direction: column; }
     .checkbox-container .checkbox-options { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-top: 10px; margin-bottom: 10px; }
@@ -212,10 +175,9 @@
           <option value="Chien">Chien</option>
           <option value="Chat">Chat</option>
       </select>
-
       <!-- Age -->
       <label for="age">Age de l'animal :</label>
-      <input type="number" placeholder="Age" name="age" required min="0" max="99">
+      <input type="number" placeholder="Age" name="age" required min="1" max="99">
       <!-- Description -->
       <label for="description">Décrivez le comportement de l'animal, sa personnalité :</label>
       <textarea id="description" name="description" rows="5" cols="33" required maxlength="255"></textarea>

@@ -180,6 +180,13 @@ private function convertRouteToRegex(string $route): string
             IndexController::class,
             "login"
           );
+          $this->addRoute(
+            "update",
+            "/update",
+            "POST",
+            IndexController::class,
+            "update"
+          );
         }
       }
     }
