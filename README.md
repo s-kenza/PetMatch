@@ -57,6 +57,15 @@ Configurez la base de données MySQL en important le fichier SQL fourni dans `pe
 
 La configuration de la base de données doit être inscrite dans un fichier `.env.local`, sur le modèle du fichier `.env`.
 
+```bash
+DB_HOST=host.docker.internal
+DB_PORT=3306
+DB_NAME=petmatch
+DB_CHARSET=utf8mb4
+DB_USER=root
+DB_PASSWORD=
+```
+
 
 ### Démarrer l'application
 
