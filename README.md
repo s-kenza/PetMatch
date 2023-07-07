@@ -10,7 +10,9 @@ Ce projet vise à faciliter le processus d'adoption d'animaux en offrant une pla
 
 * Affichage des animaux disponibles pour adoption. `path: /repertoire` ![Page répertoire](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Repertoire.PNG)
 
-* Dépôt d'une demande d'adoption pour un animal spécifique. `path: /repertoire/{nom}` ![Page de détail d'un animal](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Repertoire-nom.PNG)
+* Dépôt d'une demande d'adoption pour un animal spécifique. `path: /repertoire/{nom}`
+
+![Page de détail d'un animal](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Repertoire-nom.PNG)
 
 * Formulaire de proposition d'adoption pour les utilisateurs souhaitant mettre un animal en adoption. `path: /adoption` ![Page formulaire d'adoption](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Formulaire.PNG)
 
