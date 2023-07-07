@@ -66,6 +66,7 @@ DB_USER=root
 DB_PASSWORD=
 ```
 
+La base de données à utiliser s'appelle `petmatch`.
 
 ### Démarrer l'application
 
