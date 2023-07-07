@@ -9,12 +9,19 @@ Ce projet vise à faciliter le processus d'adoption d'animaux en offrant une pla
 ## Fonctionnalités
 
 * Affichage des animaux disponibles pour adoption. `path: /repertoire` ![Page répertoire](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Repertoire.PNG)
+
 * Dépôt d'une demande d'adoption pour un animal spécifique. `path: /repertoire/{nom}` ![Page de détail d'un animal](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Repertoire-nom.PNG)
+
 * Formulaire de proposition d'adoption pour les utilisateurs souhaitant mettre un animal en adoption. `path: /adoption` ![Page formulaire d'adoption](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Formulaire.PNG)
+
 * Ajout automatique du nouvel animal enregistré via un formulaire sur le répertoire. `path: /repertoire`
+
 * Connexion et déconnexion des utilisateurs. `path: /login` || `path: /register` ![Page connexion](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Connexion.PNG) ![Page inscription](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Inscription.PNG)
+
 * Profil utilisateur avec historique des dépôts de formulaire et des demandes d'adoption. `path: /account` ![Page profil](https://raw.githubusercontent.com/s-kenza/PetMatchImages/main/Profil.PNG)
+
 * Suppression des dépôts de formulaire et des demandes d'adoption dans le profil utilisateur. `path: /account`
+
 * Modification des informations des dépôts de formulaire dans le profil utilisateur. `path: /account`
 
 ## Règles du site / Limites à tester sur l'IHM
@@ -48,10 +55,6 @@ La configuration de la base de données doit être inscrite dans un fichier `.en
 ### Démarrer l'application
 
 Commande :
-
-```bash
-composer install
-```
 
 ```bash
 composer start
